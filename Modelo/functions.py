@@ -36,7 +36,6 @@ class Data_nc:
             #path_months = os.path.join(path_years, month)
             #ncfiles = glob.glob(os.path.join(path_months, self.fname))
             #self.path_ncfiles.extend(ncfiles)
-
         return self.path_ncfiles
 
     def loadVar(self):
@@ -46,7 +45,7 @@ class Data_nc:
         if 'GFS' in self.path:
 
             data=[]
-            for archivo in self.path_ncfiles:
+            for archivo in self.path_ncfiles[171:354]:
                 ds=xr.open_mfdataset(archivo)
                 ds_subset= ds.isel(valid_time=slice(0,8))
                 data.append(ds_subset)
@@ -55,7 +54,7 @@ class Data_nc:
 
         elif 'ERA5' in self.path:
 
-            self.values = xr.open_mfdataset(self.path_ncfiles, concat_dim='time', combine='nested')
+            self.values = xr.open_mfdataset(self.path_ncfiles[171:354], concat_dim='time', combine='nested')
             self.values = self.values.rename( {'time':'valid_time'})
             self.values_t2m= self.values[self.Var][::3,:,:]
 
