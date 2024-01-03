@@ -154,7 +154,7 @@ class Data_nc:
         return:
             self.extraccion_parches(Var=stack_time): [tensor] Retorna la salida de la función extracion_parches( ) aplicada a los valores de stack_time.
         '''
-        band1 = Data_nc("DEM_projected.nc", path='../Data/dem', Var='Band1')
+        band1 = Data_nc("DEM_rep.nc", path='../Datos/dem', Var='Band1')
         band1.path_collection()
         band1.loadVar()
         band1.upscaleVar(self.values_t2m)
