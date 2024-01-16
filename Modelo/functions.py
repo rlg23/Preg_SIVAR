@@ -7,6 +7,7 @@ import numpy as np
 import glob
 import os 
 import re
+import matplotlib.pyplot as plt
 
 class Data_nc:
     
@@ -253,3 +254,61 @@ def guardado_parches(parches, nombre_parches, carpeta, opcional='', verbose=Fals
     np.save(ruta_completa, parches)
     if verbose:
         print("Parches guardados exitosamente en: ", ruta_completa)
+
+def combined_image(tensor_pic):
+    positions = [(0, 0), (0, 32), 
+             (32, 0), (32, 32), 
+             (64, 0), (64, 32), 
+             (96, 0), (96, 32), 
+             (128, 0), (128, 32), 
+             (160, 0), (160, 32), 
+             (192, 0), (192, 32)]
+
+    image_size = 32
+    combined_image = np.zeros((6 * image_size, 2 * image_size), dtype=np.float32)
+
+    for i,j in enumerate( range(12)):
+        tensor_data = tensor_pic[j].numpy()  
+        combined_image[ positions[i][0]:positions[i][0] + image_size,  positions[i][1]:positions[i][1] + image_size ] = tensor_data   
+
+    return combined_image  
+
+def output_plot(input_plot,observed,fore):
+    residuals = observed - fore
+    
+    params = {'axes.titlesize':'9',
+              'xtick.labelsize':'9',
+              'ytick.labelsize':'9',
+              'figure.figsize': (20,20),
+              'figure.dpi': 200
+              }
+    #plt.figure(figsize=[16,16])
+    plt.style.use('ggplot')
+    plt.rcParams.update(params)
+
+    i=4
+    plt.subplot(141) #131
+    plt.imshow(fore, vmin = np.min([fore,observed]), vmax = np.max([fore,observed]))
+    plt.colorbar(orientation="vertical",fraction=0.047, pad=0.01)
+    plt.title('forecasted')
+
+    plt.subplot(142) #132
+    plt.imshow(residuals, vmin = np.min(residuals), vmax = np.max(residuals))
+    plt.colorbar(orientation="vertical", fraction=0.047, pad=0.01)
+    plt.title('residuals')
+
+
+    plt.subplot(143) #132
+    plt.imshow(observed, vmin = np.min([fore,observed]), vmax = np.max([fore,observed]))
+    plt.colorbar(orientation="vertical",fraction=0.047, pad=0.01)
+    plt.title('testing target')
+
+    plt.subplot(144)
+    plt.imshow(input_plot,
+                    vmin = np.min([input_plot]),
+                    vmax = np.max([input_plot]))
+    plt.colorbar(orientation="vertical",fraction=0.047, pad=0.01)
+    plt.title('input te')
+
+    #plt.savefig('grad_loss.png')
+    plt.show()
